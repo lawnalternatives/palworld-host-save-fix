@@ -7,6 +7,14 @@ import sys
 sys.path.append(os.path.join(os.path.dirname(abspath(getsourcefile(lambda:0))), "palworld_save_tools"))
 from palworld_save_tools.commands.convert import convert_sav_to_json
 from palworld_save_tools.commands.convert import convert_json_to_sav
+from palworld_save_tools.gvas import GvasFile
+from palworld_save_tools.json_tools import CustomEncoder
+from palworld_save_tools.palsav import compress_gvas_to_sav, decompress_sav_to_gvas
+from palworld_save_tools.paltypes import (
+    DISABLED_PROPERTIES,
+    PALWORLD_CUSTOM_PROPERTIES,
+    PALWORLD_TYPE_HINTS,
+)
 
 def main():
     if len(sys.argv) < 4:
@@ -174,7 +182,7 @@ def apply_fix(level_json_path, level_json, new_sav_path, player_sav_path):
 def sav_to_json(file, output_path):
     # Convert to json with palworld-save-tools
     # Run palworld-save-tools.py with the uncompressed file piped as stdin
-    convert_sav_to_json(file, output_path, True)
+    convert_sav_to_json(file, output_path, force=True, minify=True, allow_nan=True, custom_properties_keys=",".join(set(PALWORLD_CUSTOM_PROPERTIES.keys()) - DISABLED_PROPERTIES))
 
 def json_to_sav(file):
     # Convert the file back to binary
